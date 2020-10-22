@@ -3,15 +3,15 @@
 -- Module      : Control.Monad.SearchTree
 -- Copyright   : Sebastian Fischer
 -- License     : BSD3
--- 
+--
 -- Maintainer  : Sebastian Fischer (sebf@informatik.uni-kiel.de)
 -- Stability   : experimental
 -- Portability : portable
--- 
+--
 -- This Haskell library provides an implementation of the MonadPlus
 -- type class that represents the search space as a tree whose
 -- constructors represent mzero, return, and mplus.
--- 
+--
 -- Such a tree can be used to implement different search strategies,
 -- e.g., by using a queue. It can also be used as a basis for parallel
 -- search strategies that evaluate different parts of the search space
@@ -22,7 +22,7 @@ module Control.Monad.SearchTree ( SearchTree(..), Search, searchTree ) where
 import Control.Monad
 import Control.Applicative
 
--- | 
+-- |
 -- The type @SearchTree a@ represents non-deterministic computations
 -- as a tree structure.
 data SearchTree a = None | One a | Choice (SearchTree a) (SearchTree a)
@@ -48,6 +48,7 @@ instance Monad SearchTree where
   One x      >>= f = f x
   Choice s t >>= f = Choice (s >>= f) (t >>= f)
 
+instance MonadFail SearchTree where
   fail _ = None
 
 instance MonadPlus SearchTree where
@@ -82,6 +83,8 @@ instance Alternative Search where
 instance Monad Search where
   return x = Search ($x)
   a >>= f  = Search (\k -> search a (\x -> search (f x) k))
+
+instance MonadFail Search where
   fail _   = mzero
 
 instance MonadPlus Search where
