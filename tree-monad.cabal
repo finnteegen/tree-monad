@@ -1,5 +1,5 @@
 Name:          tree-monad
-Version:       0.3
+Version:       0.3.1
 Cabal-Version: >= 1.6
 Synopsis:      Non-Determinism Monad for Tree Search
 Description:   
@@ -18,7 +18,7 @@ Homepage:      http://sebfisch.github.com/tree-monad
 Build-Type:    Simple
 Stability:     experimental
 
-Extra-Source-Files: README
+Extra-Source-Files: README, LICENSE
 
 Library
   Build-Depends:    base >= 4.13 && < 5
