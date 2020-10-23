@@ -12,8 +12,8 @@ Category:      Control, Monads
 License:       BSD3
 License-File:  LICENSE
 Author:        Sebastian Fischer
-Maintainer:    sebf@informatik.uni-kiel.de
-Bug-Reports:   mailto:sebf@informatik.uni-kiel.de
+Maintainer:    Niels Bunkenburg <nbu@informatik.uni-kiel.de>
+Bug-Reports:   https://github.com/nbun/tree-monad/issues
 Homepage:      http://sebfisch.github.com/tree-monad
 Build-Type:    Simple
 Stability:     experimental
@@ -28,4 +28,4 @@ Library
 
 Source-Repository head
   type:     git
-  location: git://github.com/sebfisch/tree-monad.git
+  location: git://github.com/nbun/tree-monad.git
