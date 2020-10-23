@@ -21,7 +21,7 @@ Stability:     experimental
 Extra-Source-Files: README, LICENSE
 
 Library
-  Build-Depends:    base >= 4.13 && < 5
+  Build-Depends:    base >= 4.13 && < 4.15
   Exposed-Modules:  Control.Monad.SearchTree
   Ghc-Options:      -Wall
   Extensions:       Rank2Types
