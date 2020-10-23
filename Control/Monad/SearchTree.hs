@@ -1,4 +1,5 @@
 {-# LANGUAGE Rank2Types #-}
+
 -- |
 -- Module      : Control.Monad.SearchTree
 -- Copyright   : Sebastian Fischer
@@ -16,11 +17,10 @@
 -- e.g., by using a queue. It can also be used as a basis for parallel
 -- search strategies that evaluate different parts of the search space
 -- concurrently.
-
 module Control.Monad.SearchTree ( SearchTree(..), Search, searchTree ) where
 
-import Control.Monad
-import Control.Applicative
+import           Control.Applicative
+import           Control.Monad
 
 -- |
 -- The type @SearchTree a@ represents non-deterministic computations
@@ -35,17 +35,19 @@ instance Functor SearchTree where
 
 instance Applicative SearchTree where
   pure  = return
+
   (<*>) = ap
 
 instance Alternative SearchTree where
   empty = mzero
+
   (<|>) = mplus
 
 instance Monad SearchTree where
-  return = One
+  return           = One
 
-  None       >>= _ = None
-  One x      >>= f = f x
+  None >>= _       = None
+  One x >>= f      = f x
   Choice s t >>= f = Choice (s >>= f) (t >>= f)
 
 instance MonadFail SearchTree where
@@ -53,17 +55,16 @@ instance MonadFail SearchTree where
 
 instance MonadPlus SearchTree where
   mzero = None
+
   mplus = Choice
 
 -- |
 -- Another search monad based on continuations that produce search
 -- trees.
-newtype Search a = Search {
-
-  -- | Passes a continuation to a monadic search action.
-  search :: forall r . (a -> SearchTree r) -> SearchTree r
-
- }
+newtype Search a = Search
+  { -- | Passes a continuation to a monadic search action.
+    search :: forall r. (a -> SearchTree r) -> SearchTree r
+  }
 
 -- | Computes the @SearchTree@ representation of a @Search@ action.
 searchTree :: Search a -> SearchTree a
@@ -74,19 +75,23 @@ instance Functor Search where
 
 instance Applicative Search where
   pure  = return
+
   (<*>) = ap
 
 instance Alternative Search where
   empty = mzero
+
   (<|>) = mplus
 
 instance Monad Search where
-  return x = Search ($x)
-  a >>= f  = Search (\k -> search a (\x -> search (f x) k))
+  return x = Search ($ x)
+
+  a >>= f = Search (\k -> search a (\x -> search (f x) k))
 
 instance MonadFail Search where
-  fail _   = mzero
+  fail _ = mzero
 
 instance MonadPlus Search where
   mzero       = Search (const mzero)
+
   a `mplus` b = Search (\k -> search a k `mplus` search b k)
