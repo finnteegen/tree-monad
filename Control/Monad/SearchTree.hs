@@ -21,6 +21,7 @@ module Control.Monad.SearchTree ( SearchTree(..), Search, searchTree ) where
 
 import           Control.Applicative
 import           Control.Monad
+import           Control.Monad.Fix
 
 -- |
 -- The type @SearchTree a@ represents non-deterministic computations
@@ -57,6 +58,19 @@ instance MonadPlus SearchTree where
   mzero = None
 
   mplus = Choice
+
+instance MonadFix SearchTree where
+  mfix f = case fix (f . unOne) of
+             None       -> None
+             One x      -> One x
+             Choice _ _ -> Choice (mfix (leftChoice . f)) (mfix (rightChoice . f))
+    where
+      unOne (One x) = x
+      unOne _       = error "mfix SearchTree: not One"
+      leftChoice (Choice s _) = s
+      leftChoice _            = error "mfix SearchTree: not Choice"
+      rightChoice (Choice _ t) = t
+      rightChoice _            = error "mfix SearchTree: not Choice"
 
 -- |
 -- Another search monad based on continuations that produce search
@@ -95,3 +109,6 @@ instance MonadPlus Search where
   mzero       = Search (const mzero)
 
   a `mplus` b = Search (\k -> search a k `mplus` search b k)
+
+instance MonadFix Search where
+  mfix f = Search (\k -> mfix (searchTree . f) >>= k)
